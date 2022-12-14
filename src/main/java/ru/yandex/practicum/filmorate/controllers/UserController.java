@@ -8,8 +8,11 @@ import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -19,9 +22,10 @@ public class UserController {
     Integer userID = 0;
 
     @GetMapping
-    public HashMap<Integer, User> getAll() {
+    public List<User> getAll() {
         log.info("Список пользователей содержит {} записей", users.size());
-        return users;
+        List<User> usersList =new ArrayList<>(users.values());
+        return usersList;
     }
 
     @PostMapping

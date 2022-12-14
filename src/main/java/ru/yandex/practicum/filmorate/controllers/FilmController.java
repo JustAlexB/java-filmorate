@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 @RestController
@@ -23,9 +26,10 @@ public class FilmController {
     Integer filmID = 0;
 
     @GetMapping
-    public HashMap <Integer, Film> getAll(){
+    public List<Film> getAll(){
         log.info("Список фильмов содержит {} записей", films.size());
-        return films;
+        List<Film> filmsList =new ArrayList<>(films.values());
+        return filmsList;
     }
 
     @PostMapping
