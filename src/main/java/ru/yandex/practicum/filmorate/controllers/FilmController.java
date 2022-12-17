@@ -37,9 +37,4 @@ public class FilmController extends AbstractController <Film> {
         return film;
     }
 
-    @ExceptionHandler(ElementNotFoundException.class)
-    public ResponseEntity handleException(ElementNotFoundException exception) {
-        return new ResponseEntity(exception.getElement(), HttpStatus.NOT_FOUND);
-    }
-
 }

@@ -36,11 +36,6 @@ public class UserController extends AbstractController <User> {
         return user;
     }
 
-    @ExceptionHandler(ElementNotFoundException.class)
-    public ResponseEntity handleException(ElementNotFoundException exception) {
-        return new ResponseEntity(exception.getElement(),HttpStatus.NOT_FOUND);
-    }
-
     private void checkUserName(User user) {
         if(user.getName() == null || user.getName().isBlank())
             user.setName(user.getLogin());

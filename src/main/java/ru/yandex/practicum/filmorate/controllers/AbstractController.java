@@ -1,9 +1,12 @@
 package ru.yandex.practicum.filmorate.controllers;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.ElementNotFoundException;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -28,4 +31,9 @@ public abstract class AbstractController <T> {
 
     @PutMapping
     public abstract T update(@Valid @RequestBody T element);
+
+    @ExceptionHandler(ElementNotFoundException.class)
+    public ResponseEntity handleException(ElementNotFoundException exception) {
+        return new ResponseEntity(exception.getElement(), HttpStatus.NOT_FOUND);
+    }
 }
