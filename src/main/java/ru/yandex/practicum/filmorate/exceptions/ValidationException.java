@@ -2,19 +2,26 @@ package ru.yandex.practicum.filmorate.exceptions;
 
 import java.io.IOException;
 
-public class ValidationException extends IOException {
+public class ValidationException extends RuntimeException {
+
+    private Object element;
     public ValidationException() {
     }
 
-    public ValidationException(String message) {
+    public ValidationException(String message, Object element) {
         super(message);
+        this.element = element;
     }
 
-    public ValidationException(String message, Throwable cause) {
+    public ValidationException(String message, Object element, Throwable cause) {
         super(message, cause);
+        this.element = element;
     }
 
     public ValidationException(Throwable cause) {
         super(cause);
+    }
+    public Object getElement() {
+        return element;
     }
 }

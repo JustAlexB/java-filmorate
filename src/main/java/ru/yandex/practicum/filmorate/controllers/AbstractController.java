@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ElementNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
 
+import javax.naming.NameNotFoundException;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,8 +34,13 @@ public abstract class AbstractController <T> {
     @PutMapping
     public abstract T update(@Valid @RequestBody T element);
 
-    @ExceptionHandler(ElementNotFoundException.class)
-    public ResponseEntity handleException(ElementNotFoundException exception) {
-        return new ResponseEntity(exception.getElement(), HttpStatus.NOT_FOUND);
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity handleException(ValidationException exception) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        if (exception.getCause() != null)
+            status = HttpStatus.NOT_FOUND;
+
+        return new ResponseEntity(exception.getElement(), status);
     }
+    public abstract boolean validation (T element);
 }
