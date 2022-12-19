@@ -14,13 +14,13 @@ public class UserControllerTest {
 
     @Test
     public void shouldValidateUser() {
-        User user = new User(1, "mail@yandex.ru", "Alex", "", LocalDate.of(1991,02,20));
+        User user = new User(1, "mail@yandex.ru", "Alex", "", LocalDate.of(1991,2,20));
         assertTrue(userController.validation(user));
     }
 
     @Test(expected = ValidationException.class)
     public void shouldNotValidateUserEmail() {
-        User user = new User(1, "mail.yandex.ru", "Alex", "", LocalDate.of(1991,02,20));
+        User user = new User(1, "mail.yandex.ru", "Alex", "", LocalDate.of(1991,2,20));
         userController.validation(user);
 
     }

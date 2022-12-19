@@ -21,13 +21,13 @@ public class FilmControllerTest  {
         Film film = new Film(1, "name", "horrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorror" +
                 "horrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorror" +
                 "horrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorror"
-                , LocalDate.of(1654,01,03), 20);
+                , LocalDate.of(1654,1,03), 20);
         filmController.validation(film);
     }
 
     @Test(expected = ValidationException.class)
     public void shouldNotValidateFilmReleaseDate() {
-        Film film = new Film(1, "name", "horror", LocalDate.of(1654,01,03), 20);
+        Film film = new Film(1, "name", "horror", LocalDate.of(1654,1,3), 20);
         filmController.validation(film);
     }
 
