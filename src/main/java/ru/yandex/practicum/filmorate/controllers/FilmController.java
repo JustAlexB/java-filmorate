@@ -17,17 +17,15 @@ public class FilmController extends AbstractController <Film> {
 
     @Override
     public Film create(@Valid @RequestBody Film film) {
-        validation(film);
-        log.info("Добавлен фильм {}", film);
         super.create(film);
         film.setId(super.elementID);
+        log.info("Добавлен фильм {}", film);
         return film;
     }
 
     @Override
     public Film update(@Valid @RequestBody Film film) {
         Integer currentFilmID = film.getId();
-        validation(film);
         if (super.elements.containsKey(currentFilmID)) {
             log.info("Обновлен фильм {}", film);
             super.elements.put(film.getId(), film);

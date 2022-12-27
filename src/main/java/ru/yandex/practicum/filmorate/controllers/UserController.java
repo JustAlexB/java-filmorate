@@ -17,7 +17,6 @@ public class UserController extends AbstractController <User> {
     @Override
     public User create(@Valid @RequestBody User user) {
         checkUserName(user);
-        validation(user);
         super.create(user);
         user.setId(super.elementID);
         log.info("Добавлен пользователь {}", user);
@@ -27,7 +26,6 @@ public class UserController extends AbstractController <User> {
     @Override
     public User update(@Valid @RequestBody User user) {
         checkUserName(user);
-        validation(user);
         Integer currentUserID = user.getId();
         if (super.elements.containsKey(currentUserID)) {
             super.elements.put(user.getId(), user);
