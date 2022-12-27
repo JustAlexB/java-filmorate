@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
-import ru.yandex.practicum.filmorate.model.Film;
 
-import javax.naming.NameNotFoundException;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +25,16 @@ public abstract class AbstractController <T> {
 
     @PostMapping
     public T create(@Valid @RequestBody T element) {
+        validation(element);
         elements.put(++elementID, element);
         return element;
     };
 
     @PutMapping
-    public abstract T update(@Valid @RequestBody T element);
+    public T update(@Valid @RequestBody T element){
+        validation(element);
+        return element;
+    }
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity handleException(ValidationException exception) {
