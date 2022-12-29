@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDate;
 
 public class FilmControllerTest  {
-    private final static FilmController filmController = new FilmController();
+    private final static FilmController filmController = null;//new FilmController();
 
     @Test
     public void shouldValidateFilm() {
