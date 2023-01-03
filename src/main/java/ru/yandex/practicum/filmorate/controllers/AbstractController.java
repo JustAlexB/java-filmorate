@@ -28,13 +28,13 @@ public abstract class AbstractController <T> {
 
     @GetMapping
     public List<T> getAll(){
-<<<<<<< HEAD
+//<<<<<<< HEAD
         //List<T> elementList = new ArrayList<>(super.elements.values());
         return null; //elementList;
-=======
-        List<T> elementList =new ArrayList<>(elements.values());
-        return elementList;
->>>>>>> parent of c7438f0 (refactor: для разбора)
+//=======
+       // List<T> elementList =new ArrayList<>(elements.values());
+        //return elementList;
+//>>>>>>> parent of c7438f0 (refactor: для разбора)
     }
 
     @PostMapping

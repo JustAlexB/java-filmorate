@@ -10,14 +10,6 @@ import ru.yandex.practicum.filmorate.model.ErrorResponse;
 public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleIncorrectParameterException(final IncorrectParameterException e) {
-        return new ErrorResponse(
-                String.format("Ошибка с полем \"%s\".", e.getParameter())
-        );
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final ValidationException e) {
         return new ErrorResponse(
                 e.getMessage()
