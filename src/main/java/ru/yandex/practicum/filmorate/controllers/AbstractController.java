@@ -28,7 +28,7 @@ public abstract class AbstractController <T> {
         validation(element);
         elements.put(++elementID, element);
         return element;
-    };
+    }
 
     @PutMapping
     public T update(@Valid @RequestBody T element){
