@@ -9,26 +9,31 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public abstract class AbstractController <T> {
-    HashMap <Integer, T> elements = new HashMap<>();
-    Integer elementID = 0;
+
+    //HashMap <Integer, T> elements = new HashMap<>();
+    //Integer elementID = 0;
+//    protected final InMemoryFilmNUserStorage <T> filmNUserStorage;
+//
+//    @Autowired
+//    public AbstractController(InMemoryFilmNUserStorage<T> filmNUserStorage) {
+//        this.filmNUserStorage = filmNUserStorage;
+//    }
 
     @GetMapping
     public List<T> getAll(){
-        List<T> elementList =new ArrayList<>(elements.values());
-        return elementList;
+        //List<T> elementList = new ArrayList<>(super.elements.values());
+        return null; //elementList;
     }
 
     @PostMapping
     public T create(@Valid @RequestBody T element) {
         validation(element);
-        elements.put(++elementID, element);
+       // super.elements.put(++super.elementID, element);
         return element;
-    };
+    }
 
     @PutMapping
     public T update(@Valid @RequestBody T element){
