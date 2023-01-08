@@ -6,18 +6,26 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import javax.naming.NameNotFoundException;
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.HashMap;
 
 @Component
 @Slf4j
-public class InMemoryFilmStorage extends InMemoryFilmNUserStorage <Film> {
+public class InMemoryFilmStorage implements FilmStorage <Film> {
+    public HashMap<Integer, Film> elements = new HashMap<>();
+    public Integer elementID = 0;
+    @Override
+    public Collection<Film> getAll(){
+        return elements.values();
+    }
 
     @Override
     public Film create(@Valid Film film) {
-        super.create(film);
-        film.setId(super.elementID);
+        validation(film);
+        elements.put(++elementID, film);
+        film.setId(elementID);
         log.info("Добавлен фильм {}", film);
         return film;
     }
@@ -25,9 +33,9 @@ public class InMemoryFilmStorage extends InMemoryFilmNUserStorage <Film> {
     @Override
     public Film update(@Valid Film film) {
         Integer currentFilmID = film.getId();
-        if (super.elements.containsKey(currentFilmID)) {
+        if (elements.containsKey(currentFilmID)) {
             log.info("Обновлен фильм {}", film);
-            super.elements.put(film.getId(), film);
+            elements.put(film.getId(), film);
         } else {
             log.info("Фильм {} не найден", film);
             throw new NotFoundException("Фильм " + film.toString() + " не найден");

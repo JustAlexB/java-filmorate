@@ -15,7 +15,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/users")
 @Slf4j
-//public class UserController extends AbstractController<User> {
 public class UserController {
     private final UserService userService;
     @Autowired
@@ -25,7 +24,7 @@ public class UserController {
 
     @GetMapping
     public Collection<User> getAll(){
-        Collection<User> elementList = userService.getAll();//new ArrayList<>(.elements.values());
+        Collection<User> elementList = userService.getAll();
         return elementList;
     }
 

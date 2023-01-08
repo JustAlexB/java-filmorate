@@ -15,7 +15,6 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/films")
 @Slf4j
-//public class FilmController extends AbstractController<Film> {
 public class FilmController {
     private final FilmService filmService;
 

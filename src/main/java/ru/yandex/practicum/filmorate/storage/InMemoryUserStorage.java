@@ -8,15 +8,26 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.TreeSet;
 
 @Component
 @Slf4j
-public class InMemoryUserStorage extends InMemoryFilmNUserStorage <User> {
+public class InMemoryUserStorage implements UserStorage <User> {
+    public HashMap<Integer, User> elements = new HashMap<>();
+    public Integer elementID = 0;
+    @Override
+    public Collection<User> getAll(){
+        return elements.values();
+    }
+
     @Override
     public User create(@Valid User user) {
         checkUserName(user);
-        super.create(user);
-        user.setId(super.elementID);
+        validation(user);
+        elements.put(++elementID, user);
+        user.setId(elementID);
         return user;
     }
 
@@ -24,8 +35,8 @@ public class InMemoryUserStorage extends InMemoryFilmNUserStorage <User> {
     public User update(@Valid User user) {
         checkUserName(user);
         Integer currentUserID = user.getId();
-        if (super.elements.containsKey(currentUserID)) {
-            super.elements.put(user.getId(), user);
+        if (elements.containsKey(currentUserID)) {
+            elements.put(user.getId(), user);
         } else {
             throw new NotFoundException("Пользователь " + user.toString() + " не найден");
         }
@@ -36,6 +47,21 @@ public class InMemoryUserStorage extends InMemoryFilmNUserStorage <User> {
         if(user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
+    }
+    @Override
+    public void addFriend(User user, User friend) {
+        TreeSet<Integer> friends = userFriends.get(user.getId());
+        if (friends == null)
+            friends = new TreeSet<>();
+
+        friends.add(friend.getId());
+        userFriends.put(user.getId(), friends);
+    }
+
+    @Override
+    public void removeFriend(User user, User friend) {
+        TreeSet <Integer> friends = userFriends.get(user.getId());
+        friends.remove(friend.getId());
     }
 
     @Override
