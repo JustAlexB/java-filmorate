@@ -4,14 +4,13 @@ import org.junit.Test;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserControllerTest {
-    private final static UserStorage userStorage = new InMemoryUserStorage();
+    private final static InMemoryUserStorage userStorage = new InMemoryUserStorage();
 
     @Test
     public void shouldValidateUser() {

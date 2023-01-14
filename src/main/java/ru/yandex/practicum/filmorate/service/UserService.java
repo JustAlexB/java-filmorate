@@ -58,13 +58,13 @@ public class UserService {
     }
 
     public Collection<User> getUserFriends(Integer userID){
-        TreeSet<Integer> friendsOfUser = UserStorage.userFriends.get(userID);
+        TreeSet<Integer> friendsOfUser = UserStorage.sympathy.get(userID);
         return getCollectionOfUsers(friendsOfUser);
     }
 
     public Collection <User> getCommonFriends(Integer userID, Integer otherUserID){
-        TreeSet <Integer> friendsOfUser = UserStorage.userFriends.get(userID);
-        TreeSet <Integer> friendsOfOther = UserStorage.userFriends.get(otherUserID);
+        TreeSet <Integer> friendsOfUser = UserStorage.sympathy.get(userID);
+        TreeSet <Integer> friendsOfOther = UserStorage.sympathy.get(otherUserID);
         if (friendsOfUser == null || friendsOfOther == null)
             return getCollectionOfUsers(null);
         TreeSet <Integer> friendsOfUserFinal = new TreeSet<>();

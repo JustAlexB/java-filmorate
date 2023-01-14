@@ -8,23 +8,13 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashMap;
 
 @Component
 @Slf4j
-public class InMemoryFilmStorage implements FilmStorage <Film> {
-    public HashMap<Integer, Film> elements = new HashMap<>();
-    public Integer elementID = 0;
-    @Override
-    public Collection<Film> getAll(){
-        return elements.values();
-    }
-
+public class InMemoryFilmStorage extends InMemoryStorage <Film> {
     @Override
     public Film create(@Valid Film film) {
-        validation(film);
-        elements.put(++elementID, film);
+        super.create(film);
         film.setId(elementID);
         log.info("Добавлен фильм {}", film);
         return film;
@@ -32,6 +22,7 @@ public class InMemoryFilmStorage implements FilmStorage <Film> {
 
     @Override
     public Film update(@Valid Film film) {
+        super.update(film);
         Integer currentFilmID = film.getId();
         if (elements.containsKey(currentFilmID)) {
             log.info("Обновлен фильм {}", film);

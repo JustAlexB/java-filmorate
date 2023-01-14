@@ -41,23 +41,23 @@ public class FilmService {
     }
 
     public void addLike(Integer filmID, Integer userID) {
-        TreeSet<Integer> likes = filmStorage.filmLikes.get(filmID);
+        TreeSet<Integer> likes = filmStorage.sympathy.get(filmID);
         if (likes == null)
             likes = new TreeSet<>();
         likes.add(userID);
-        filmStorage.filmLikes.put(filmID, likes);
+        filmStorage.sympathy.put(filmID, likes);
     }
 
     public void removeLike(Integer filmID, Integer userID) {
-        TreeSet <Integer> likes = filmStorage.filmLikes.get(filmID);
+        TreeSet <Integer> likes = filmStorage.sympathy.get(filmID);
         likes.remove(userID);
         if(likes.size() == 0)
-            filmStorage.filmLikes.remove(filmID);
+            filmStorage.sympathy.remove(filmID);
     }
 
     public Collection <Film> getRateFilms(Integer count) {
         HashMap<Film, Integer> transitional = new HashMap<>();
-        for (Map.Entry<Integer, TreeSet<Integer>> entry : filmStorage.filmLikes.entrySet()) {
+        for (Map.Entry<Integer, TreeSet<Integer>> entry : filmStorage.sympathy.entrySet()) {
             Film key = getFilmByID(entry.getKey());
             Integer value = entry.getValue().size();
             transitional.put(key, value);

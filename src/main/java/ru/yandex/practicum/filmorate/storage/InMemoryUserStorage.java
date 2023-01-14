@@ -14,19 +14,11 @@ import java.util.TreeSet;
 
 @Component
 @Slf4j
-public class InMemoryUserStorage implements UserStorage <User> {
-    public HashMap<Integer, User> elements = new HashMap<>();
-    public Integer elementID = 0;
-    @Override
-    public Collection<User> getAll(){
-        return elements.values();
-    }
-
+public class InMemoryUserStorage extends InMemoryStorage <User> {
     @Override
     public User create(@Valid User user) {
         checkUserName(user);
-        validation(user);
-        elements.put(++elementID, user);
+        super.create(user);
         user.setId(elementID);
         return user;
     }
@@ -34,6 +26,7 @@ public class InMemoryUserStorage implements UserStorage <User> {
     @Override
     public User update(@Valid User user) {
         checkUserName(user);
+        super.update(user);
         Integer currentUserID = user.getId();
         if (elements.containsKey(currentUserID)) {
             elements.put(user.getId(), user);
@@ -48,19 +41,18 @@ public class InMemoryUserStorage implements UserStorage <User> {
             user.setName(user.getLogin());
         }
     }
-    @Override
+
     public void addFriend(User user, User friend) {
-        TreeSet<Integer> friends = userFriends.get(user.getId());
+        TreeSet<Integer> friends = sympathy.get(user.getId());
         if (friends == null)
             friends = new TreeSet<>();
 
         friends.add(friend.getId());
-        userFriends.put(user.getId(), friends);
+        sympathy.put(user.getId(), friends);
     }
 
-    @Override
     public void removeFriend(User user, User friend) {
-        TreeSet <Integer> friends = userFriends.get(user.getId());
+        TreeSet <Integer> friends = sympathy.get(user.getId());
         friends.remove(friend.getId());
     }
 
