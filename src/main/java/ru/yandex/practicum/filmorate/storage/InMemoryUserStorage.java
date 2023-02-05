@@ -8,8 +8,9 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Optional;
 import java.util.TreeSet;
 
 @Component
@@ -36,13 +37,19 @@ public class InMemoryUserStorage extends InMemoryStorage <User> {
         return user;
     }
 
+    public Optional<User> getUserByID(Integer userID){
+        return getByID(userID);
+    }
+
     private void checkUserName(User user) {
         if(user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
     }
 
-    public void addFriend(User user, User friend) {
+    public void addFriend(Integer userID, Integer friendID) {
+        User user = elements.get(userID);
+        User friend = elements.get(friendID);
         TreeSet<Integer> friends = sympathy.get(user.getId());
         if (friends == null)
             friends = new TreeSet<>();
@@ -51,9 +58,36 @@ public class InMemoryUserStorage extends InMemoryStorage <User> {
         sympathy.put(user.getId(), friends);
     }
 
-    public void removeFriend(User user, User friend) {
+    public void removeFriend(Integer userID, Integer friendID) {
+        User user = elements.get(userID);
+        User friend = elements.get(friendID);
         TreeSet <Integer> friends = sympathy.get(user.getId());
         friends.remove(friend.getId());
+    }
+
+    public Collection<User> getUserFriends(Integer userID){
+        TreeSet<Integer> friendsOfUser = sympathy.get(userID);
+        return getCollectionOfUsers(friendsOfUser);
+    }
+
+    public Collection <User> getCommonFriends(Integer userID, Integer otherUserID){
+        TreeSet <Integer> friendsOfUser = sympathy.get(userID);
+        TreeSet <Integer> friendsOfOther = sympathy.get(otherUserID);
+        if (friendsOfUser == null || friendsOfOther == null)
+            return getCollectionOfUsers(null);
+        TreeSet <Integer> friendsOfUserFinal = new TreeSet<>();
+        friendsOfUserFinal.addAll(friendsOfUser);
+        friendsOfUserFinal.retainAll(friendsOfOther);
+        return getCollectionOfUsers(friendsOfUserFinal);
+    }
+
+    private Collection<User> getCollectionOfUsers(TreeSet<Integer> usersID){
+        Collection<User> friends = new ArrayList<>();
+        if (usersID != null)
+            for (Integer value : usersID) {
+                friends.add(getUserByID(value).get());
+            }
+        return friends;
     }
 
     @Override

@@ -77,7 +77,7 @@ public class UserController {
     @GetMapping("/{id}")
     public User getUserById(@PathVariable("id") Integer userID){
         log.info("Запрос пользователя по ID: {}", userID);
-        User fondUser = userService.getUserByID(userID);
+        User fondUser = userService.getUserByID(userID).get();
         if (fondUser == null) {
             log.info("Пользователь c ID {} не найден", userID);
             throw new NotFoundException("Пользователь c ID: " + userID + " не найден");

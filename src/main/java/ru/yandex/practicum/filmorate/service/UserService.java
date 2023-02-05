@@ -2,85 +2,76 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.FriendsDbStorage;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.Storage;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.TreeSet;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
 public class UserService {
-    protected final InMemoryUserStorage UserStorage;
+    protected final Storage<User> userStorage;
+    protected final FriendsDbStorage friendsStorage;
 
     @Autowired
-    public UserService(InMemoryUserStorage UserStorage) {
-        this.UserStorage = UserStorage;
+    public UserService(@Qualifier("userDbStorage") Storage<User> userStorage, FriendsDbStorage friendsStorage) {
+        this.userStorage = userStorage;
+        this.friendsStorage = friendsStorage;
     }
 
     public Collection<User> getAll(){
-        return UserStorage.getAll();
+        return userStorage.getAll();
     }
 
-    public User getUserByID(Integer userID) {
-        return UserStorage.elements.get(userID);
+    public Optional<User> getUserByID(Integer userID) {
+        return userStorage.getByID(userID);
     }
 
     public User create(User user){
-        UserStorage.create(user);
+        userStorage.create(user);
         return user;
     }
 
     public boolean update(User user) {
-        UserStorage.update(user);
-        Integer currentUserID = user.getId();
-        if (UserStorage.elements.containsKey(currentUserID)) {
-            UserStorage.elements.put(user.getId(), user);
+        if (userStorage.update(user) != null) {
             return true;
         } else
             return false;
     }
 
     public void addAsFriend(Integer userID, Integer friendID) {
-        User user = UserStorage.elements.get(userID);
-        User friend = UserStorage.elements.get(friendID);
-        UserStorage.addFriend(user, friend);
-        UserStorage.addFriend(friend, user);
+        User user = userStorage.getByID(userID).get();
+        User friend = userStorage.getByID(friendID).get();
+        if(user !=null && friend !=null && !user.equals(friend)) {
+            Collection<User> userFriends = friendsStorage.getUserFriends(friendID);
+            boolean isFriends = false;
+            if(!userFriends.isEmpty()){
+                isFriends = userFriends.contains(user);
+            }
+            friendsStorage.addFriend(userID, friendID, isFriends);
+        }
     }
 
     public void removeFromFriends(Integer userID, Integer friendID) {
-        User user = UserStorage.elements.get(userID);
-        User friend = UserStorage.elements.get(friendID);
-        UserStorage.removeFriend(user, friend);
-        UserStorage.removeFriend(friend, user);
+        friendsStorage.removeFriend(userID, friendID);
     }
 
     public Collection<User> getUserFriends(Integer userID){
-        TreeSet<Integer> friendsOfUser = UserStorage.sympathy.get(userID);
-        return getCollectionOfUsers(friendsOfUser);
+        if (userStorage.getByID(userID) != null)
+            return friendsStorage.getUserFriends(userID);
+        else
+            return null;
     }
 
     public Collection <User> getCommonFriends(Integer userID, Integer otherUserID){
-        TreeSet <Integer> friendsOfUser = UserStorage.sympathy.get(userID);
-        TreeSet <Integer> friendsOfOther = UserStorage.sympathy.get(otherUserID);
-        if (friendsOfUser == null || friendsOfOther == null)
-            return getCollectionOfUsers(null);
-        TreeSet <Integer> friendsOfUserFinal = new TreeSet<>();
-        friendsOfUserFinal.addAll(friendsOfUser);
-        friendsOfUserFinal.retainAll(friendsOfOther);
-        return getCollectionOfUsers(friendsOfUserFinal);
+        return friendsStorage.getCommonFriends(userID, otherUserID);
     }
 
-    private Collection<User> getCollectionOfUsers(TreeSet<Integer> usersID){
-        Collection<User> friends = new ArrayList<>();
-        if (usersID != null)
-            for (Integer value : usersID) {
-                friends.add(getUserByID(value));
-            }
-        return friends;
-    }
 
     public void checkUserName(User user) {
         if(user.getName() == null || user.getName().isBlank()) {

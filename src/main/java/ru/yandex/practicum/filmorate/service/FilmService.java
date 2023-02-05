@@ -1,20 +1,22 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.RateDbStorage;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.Storage;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
 
 @Service
 public class FilmService {
-    private final InMemoryFilmStorage filmStorage;
+    private final Storage<Film> filmStorage;
+    protected final RateDbStorage rateStorage;
     @Autowired
-    public FilmService(InMemoryFilmStorage filmStorage) {
+    public FilmService(@Qualifier("filmDbStorage")Storage<Film> filmStorage, RateDbStorage rateStorage) {
         this.filmStorage = filmStorage;
+        this.rateStorage = rateStorage;
     }
 
     public Collection<Film> getAll(){
@@ -27,53 +29,26 @@ public class FilmService {
     }
 
     public boolean update(Film film) {
-        filmStorage.update(film);
-        Integer currentFilmID = film.getId();
-        if (filmStorage.elements.containsKey(currentFilmID)) {
-            filmStorage.elements.put(film.getId(), film);
+        if (filmStorage.update(film) != null) {
             return true;
         } else
             return false;
     }
 
-    public Film getFilmByID(Integer filmID) {
-        return filmStorage.elements.get(filmID);
+    public Optional<Film> getFilmByID(Integer filmID) {
+        return filmStorage.getByID(filmID);
     }
 
     public void addLike(Integer filmID, Integer userID) {
-        TreeSet<Integer> likes = filmStorage.sympathy.get(filmID);
-        if (likes == null)
-            likes = new TreeSet<>();
-        likes.add(userID);
-        filmStorage.sympathy.put(filmID, likes);
+        rateStorage.addLike(filmID, userID);
     }
 
     public void removeLike(Integer filmID, Integer userID) {
-        TreeSet <Integer> likes = filmStorage.sympathy.get(filmID);
-        likes.remove(userID);
-        if(likes.size() == 0)
-            filmStorage.sympathy.remove(filmID);
+        rateStorage.removeLike(filmID, userID);
     }
 
     public Collection <Film> getRateFilms(Integer count) {
-        HashMap<Film, Integer> transitional = new HashMap<>();
-        for (Map.Entry<Integer, TreeSet<Integer>> entry : filmStorage.sympathy.entrySet()) {
-            Film key = getFilmByID(entry.getKey());
-            Integer value = entry.getValue().size();
-            transitional.put(key, value);
-        }
-
-        LinkedHashMap<Film, Integer> collectFilms = transitional.entrySet().stream()
-                .sorted(Map.Entry.<Film, Integer>comparingByValue().reversed())
-                .limit(count)
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-
-        Collection<Film> filmRate = (collectFilms.isEmpty() ? filmStorage.elements.values() : new ArrayList<>(collectFilms.keySet()));
-
-        return filmRate;
+        return rateStorage.getRateFilms(count);
     }
 
 }

@@ -1,0 +1,63 @@
+CREATE TABLE IF NOT EXISTS users (
+    userID INTEGER NOT NULL AUTO_INCREMENT,
+    name VARCHAR(60) NOT NULL,
+    birthday DATE NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    login VARCHAR(60) NOT NULL,
+    PRIMARY KEY (userID)
+);
+
+CREATE TABLE IF NOT EXISTS friendsStatus (
+    statusID INTEGER NOT NULL AUTO_INCREMENT,
+    name VARCHAR(60) NOT NULL,
+    PRIMARY KEY (statusID)
+);
+
+CREATE TABLE IF NOT EXISTS friends (
+    friendsID INTEGER NOT NULL AUTO_INCREMENT,
+    IDuser INTEGER REFERENCES users(userID),
+    IDfriend INTEGER REFERENCES users(userID),
+    status BOOLEAN,
+    PRIMARY KEY (friendsID)
+);
+
+CREATE TABLE IF NOT EXISTS mpa (
+    mpaID INTEGER NOT NULL AUTO_INCREMENT,
+    name VARCHAR(5) NOT NULL,
+    description VARCHAR(100) NOT NULL,
+    PRIMARY KEY (mpaID)
+);
+
+CREATE TABLE IF NOT EXISTS film (
+    filmID INTEGER NOT NULL AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    description VARCHAR(200) NOT NULL,
+    releaseDate Date NOT NULL,
+    duration INTEGER NOT NULL,
+    IDmpa INTEGER REFERENCES mpa(mpaID),
+    PRIMARY KEY (filmID)
+);
+
+CREATE TABLE IF NOT EXISTS genre (
+    genreID INTEGER NOT NULL AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    PRIMARY KEY (genreID)
+);
+
+CREATE TABLE IF NOT EXISTS filmGenre (
+    filmGenreID INTEGER AUTO_INCREMENT,
+    IDfilm INTEGER REFERENCES film(filmID),
+    IDgenre INTEGER REFERENCES genre(genreID),
+    PRIMARY KEY (filmGenreID)
+);
+
+CREATE TABLE IF NOT EXISTS likes (
+    likesID INTEGER NOT NULL AUTO_INCREMENT,
+    IDfilm INTEGER NOT NULL REFERENCES film(filmID),
+    IDuser INTEGER NOT NULL REFERENCES users(userID),
+    PRIMARY KEY (likesID)
+);
+
+
+
+

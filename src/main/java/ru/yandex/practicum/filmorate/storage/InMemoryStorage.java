@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.TreeSet;
 
 public class InMemoryStorage <T> implements Storage <T> {
@@ -25,14 +26,19 @@ public class InMemoryStorage <T> implements Storage <T> {
         return element;
     }
 
+    @Override
     public T update(@Valid @RequestBody T element){
         validation(element);
         return element;
     }
 
     @Override
+    public Optional<T> getByID(Integer elementID) {
+        return Optional.of(elements.get(elementID));
+    }
+
+    @Override
     public boolean validation (T element) {
        return false;
     }
-
 }

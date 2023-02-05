@@ -8,6 +8,8 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -32,6 +34,46 @@ public class InMemoryFilmStorage extends InMemoryStorage <Film> {
             throw new NotFoundException("Фильм " + film.toString() + " не найден");
         }
         return film;
+    }
+
+    public Optional<Film> getFilmByID(Integer filmID) {
+        return getByID(filmID);
+    }
+
+    public void addLike(Integer filmID, Integer userID) {
+        TreeSet<Integer> likes = sympathy.get(filmID);
+        if (likes == null)
+            likes = new TreeSet<>();
+        likes.add(userID);
+        sympathy.put(filmID, likes);
+    }
+
+    public void removeLike(Integer filmID, Integer userID) {
+        TreeSet <Integer> likes = sympathy.get(filmID);
+        likes.remove(userID);
+        if(likes.size() == 0)
+            sympathy.remove(filmID);
+    }
+
+    public Collection<Film> getRateFilms(Integer count) {
+//        HashMap<Film, Integer> transitional = new HashMap<>();
+//        for (Map.Entry<Integer, TreeSet<Integer>> entry : sympathy.entrySet()) {
+//            Film key = getFilmByID(entry.getKey());
+//            Integer value = entry.getValue().size();
+//            transitional.put(key, value);
+//        }
+//
+//        LinkedHashMap<Film, Integer> collectFilms = transitional.entrySet().stream()
+//                .sorted(Map.Entry.<Film, Integer>comparingByValue().reversed())
+//                .limit(count)
+//                .collect(Collectors.toMap(
+//                        Map.Entry::getKey,
+//                        Map.Entry::getValue,
+//                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+//
+//        Collection<Film> filmRate = (collectFilms.isEmpty() ? elements.values() : new ArrayList<>(collectFilms.keySet()));
+
+        return null;//filmRate;
     }
 
     @Override

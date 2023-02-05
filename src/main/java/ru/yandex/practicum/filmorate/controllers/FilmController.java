@@ -70,7 +70,7 @@ public class FilmController {
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable("id") Integer filmID){
         log.info("Запрос фильма по ID: {}", filmID);
-        Film fondFilm = filmService.getFilmByID(filmID);
+        Film fondFilm = filmService.getFilmByID(filmID).get();
         if (fondFilm == null) {
             log.info("Фильм c ID {} не найден", filmID);
             throw new NotFoundException("Фильм c ID: " + filmID + " не найден");
