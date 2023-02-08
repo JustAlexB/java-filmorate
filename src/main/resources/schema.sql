@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS film (
     releaseDate Date NOT NULL,
     duration INTEGER NOT NULL,
     IDmpa INTEGER REFERENCES mpa(mpaID),
+    rate INTEGER,
     PRIMARY KEY (filmID)
 );
 

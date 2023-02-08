@@ -46,15 +46,16 @@ public class FriendsDbStorage {
                     userRows.getString("login"),
                     userRows.getString("name"),
                     userRows.getDate("birthday").toLocalDate());
-            if (user != null)
-                friendsOfUser.add(user);
+            friendsOfUser.add(user);
         }
         return friendsOfUser;
     }
 
     public Collection<User> getCommonFriends(Integer userID, Integer otherUserID) {
         List<User> friendsOfUser = new ArrayList<>();
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("SELECT * FROM USERS u WHERE u.USERID IN (SELECT f.IDFRIEND  FROM FRIENDS f WHERE f.IDuser = ? AND f.IDFRIEND IN (SELECT IDFriend FROM FRIENDS f WHERE IDUSER = ?))", userID, otherUserID);
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("SELECT * FROM USERS u WHERE u.USERID IN " +
+                "(SELECT f.IDFRIEND  FROM FRIENDS f WHERE f.IDuser = ? AND f.IDFRIEND " +
+                "IN (SELECT IDFriend FROM FRIENDS f WHERE IDUSER = ?))", userID, otherUserID);
         while(userRows.next()) {
             log.info("Найден общий друг пользоватлей: {} и {} -> {}", userID, otherUserID, userRows.getString("userID"));
             User user = new User(userRows.getInt("userID"),
@@ -62,8 +63,7 @@ public class FriendsDbStorage {
                     userRows.getString("login"),
                     userRows.getString("name"),
                     userRows.getDate("birthday").toLocalDate());
-            if (user != null)
-                friendsOfUser.add(user);
+            friendsOfUser.add(user);
         }
         return friendsOfUser;
     }

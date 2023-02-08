@@ -14,6 +14,8 @@ import ru.yandex.practicum.filmorate.storage.Storage;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,26 +33,28 @@ public class FilmDbStorage implements Storage<Film> {
         this.genreStorage = genreStorage;
     }
 
+    private static Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
+        return new Film(rs.getInt("filmID"),
+                rs.getString("name"),
+                rs.getString("description"),
+                rs.getDate("releaseDate").toLocalDate(),
+                rs.getInt("duration"),
+                new Mpa(rs.getInt("IDmpa"), "", ""),
+                null,
+                rs.getInt("rate"));
+    }
+
     @Override
     public Collection<Film> getAll(){
-        ArrayList<Film> films = new ArrayList<>();
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("SELECT * FROM film");
-        while(filmRows.next()) {
-            log.info("Найден фильм: {} {}", filmRows.getString("filmID"), filmRows.getString("name"));
-            Film film = new Film(filmRows.getInt("filmID"),
-                    filmRows.getString("name"),
-                    filmRows.getString("description"),
-                    filmRows.getDate("releaseDate").toLocalDate(),
-                    filmRows.getInt("duration"),
-                    null,
-                    genreStorage.getGenreByFilmID(filmRows.getInt("filmID")));
 
-            Optional<Mpa> mpa = mpaStorage.getMpaByID(filmRows.getInt("IDmpa"));
+        List<Film> films = jdbcTemplate.query("SELECT * FROM film", FilmDbStorage::makeFilm);
+
+        for (Film film : films) {
+            Optional<Mpa> mpa = mpaStorage.getMpaByID(film.getMpa().getId());
             mpa.ifPresent(film::setMpa);
-
-            if (film != null)
-                films.add(film);
+            film.setGenres(genreStorage.getGenreByFilmID(film.getId()));
         }
+
         return films;
     }
 
@@ -121,7 +125,9 @@ public class FilmDbStorage implements Storage<Film> {
                     filmRows.getDate("releaseDate").toLocalDate(),
                     filmRows.getInt("duration"),
                     null,
-                    genreStorage.getGenreByFilmID(filmRows.getInt("filmID")));
+                    genreStorage.getGenreByFilmID(filmRows.getInt("filmID")),
+                    filmRows.getInt("rate"));
+
             Optional<Mpa> mpa = mpaStorage.getMpaByID(filmRows.getInt("IDmpa"));
             mpa.ifPresent(film::setMpa);
             return Optional.of(film);
@@ -143,4 +149,5 @@ public class FilmDbStorage implements Storage<Film> {
         }
         return true;
     }
+
 }

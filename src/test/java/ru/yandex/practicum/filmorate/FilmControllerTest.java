@@ -13,23 +13,23 @@ public class FilmControllerTest  {
 
     @Test
     public void shouldValidateFilm() {
-//        Film film = new Film(1, "name", "horror", LocalDate.now(), 20);
-//        assertTrue(filmStorage.validation(film));
+        Film film = new Film(1, "name", "horror", LocalDate.now(), 20, null, null, 0);
+        assertTrue(filmStorage.validation(film));
     }
 
     @Test(expected = ValidationException.class)
     public void shouldNotValidateFilmDescription() {
-//        Film film = new Film(1, "name", "horrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorror" +
-//                "horrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorror" +
-//                "horrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorror"
-//                , LocalDate.of(1654,1,03), 20);
-//        filmStorage.validation(film);
+        Film film = new Film(1, "name", "horrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorror" +
+                "horrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorror" +
+                "horrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorrorhorror"
+                , LocalDate.of(1654,1,03), 20, null, null, 0);
+        filmStorage.validation(film);
     }
 
     @Test(expected = ValidationException.class)
     public void shouldNotValidateFilmReleaseDate() {
-//        Film film = new Film(1, "name", "horror", LocalDate.of(1654,1,3), 20);
-//        filmStorage.validation(film);
+        Film film = new Film(1, "name", "horror", LocalDate.of(1654,1,3), 20, null, null, 0);
+        filmStorage.validation(film);
     }
 
 }

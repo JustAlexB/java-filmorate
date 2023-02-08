@@ -12,9 +12,12 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
 
 import javax.validation.Valid;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -26,21 +29,17 @@ public class UserDbStorage implements Storage<User> {
         this.jdbcTemplate=jdbcTemplate;
     }
 
+    private static User makeUser(ResultSet rs, int rowNum) throws SQLException {
+        return new User(rs.getInt("userID"),
+                rs.getString("email"),
+                rs.getString("login"),
+                rs.getString("name"),
+                rs.getDate("birthday").toLocalDate());
+    }
+
     @Override
     public Collection<User> getAll(){
-        ArrayList<User> users = new ArrayList<>();
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("SELECT * FROM users");
-        while(userRows.next()) {
-            log.info("Найден пользователь: {} {}", userRows.getString("userID"), userRows.getString("name"));
-            User user = new User(userRows.getInt("userID"),
-                    userRows.getString("email"),
-                    userRows.getString("login"),
-                    userRows.getString("name"),
-                    userRows.getDate("birthday").toLocalDate());
-            if (Optional.of(user).isPresent())
-                users.add(user);
-        }
-        return users;
+        return jdbcTemplate.query("SELECT * FROM users", UserDbStorage::makeUser);
     }
 
     @Override
